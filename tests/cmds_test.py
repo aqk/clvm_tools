@@ -70,6 +70,8 @@ class TestCmds(unittest.TestCase):
 def make_f(cmd_lines, expected_output, comments, path):
 
     def f(self):
+        cwd = os.path.dirname(path)
+        os.chdir(cwd)
         cmd = ''.join(cmd_lines)
         for c in cmd.split(";"):
             r, actual_output, actual_stderr = self.invoke_tool(c)
