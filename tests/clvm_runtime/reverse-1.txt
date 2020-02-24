@@ -1,0 +1,2 @@
+run '(mod (A B) (include "../../clvm_runtime/lib.clvm") (reverse (q (foo BAR BAZ))))'
+(q ("BAZ" "BAR" "foo"))
