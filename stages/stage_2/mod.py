@@ -3,6 +3,8 @@ from clvm import KEYWORD_TO_ATOM
 from clvm_tools import binutils
 from clvm_tools.NodePath import LEFT, RIGHT, TOP
 
+from ir import reader
+
 from .helpers import eval
 
 
@@ -44,9 +46,23 @@ def build_tree_program(items):
     return [CONS_KW, left, right]
 
 
+def file_name_to_ir_sexp(name):
+    src_text = open(name).read()
+    return reader.read_ir(src_text)
+
+
+def parse_include(name, namespace, functions, constants, macros):
+    assembled_sexp = binutils.assemble_from_ir(file_name_to_ir_sexp(name))
+    for sexp in assembled_sexp.as_iter():
+        parse_mod_sexp(sexp, namespace, functions, constants, macros)
+
+
 def parse_mod_sexp(declaration_sexp, namespace, functions, constants, macros):
     op = declaration_sexp.first().as_atom()
     name = declaration_sexp.rest().first().as_atom()
+    if op == b"include":
+        parse_include(name, namespace, functions, constants, macros)
+        return
     if name in namespace:
         raise SyntaxError('symbol "%s" redefined' % name.decode())
     namespace.add(name)
