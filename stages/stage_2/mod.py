@@ -44,6 +44,22 @@ def build_tree_program(items):
     return [CONS_KW, left, right]
 
 
+def parse_mod_sexp(declaration_sexp, namespace, functions, constants, macros):
+    op = declaration_sexp.first().as_atom()
+    name = declaration_sexp.rest().first().as_atom()
+    if name in namespace:
+        raise SyntaxError('symbol "%s" redefined' % name.decode())
+    namespace.add(name)
+    if op == b"defmacro":
+        macros.append(declaration_sexp)
+    elif op == b"defun":
+        functions[name] = declaration_sexp.rest().rest()
+    elif op == b"defconstant":
+        constants[name] = [QUOTE_KW, declaration_sexp.rest().rest().first().as_atom()]
+    else:
+        raise SyntaxError("expected defun, defmacro, or defconstant")
+
+
 def compile_mod_stage_1(args):
     """
     stage 1: collect up names of globals (functions, constants, macros)
@@ -59,22 +75,7 @@ def compile_mod_stage_1(args):
         args = args.rest()
         if args.rest().nullp():
             break
-        declaration_sexp = args.first()
-        op = declaration_sexp.first().as_atom()
-        name = declaration_sexp.rest().first().as_atom()
-        if name in namespace:
-            raise SyntaxError('symbol "%s" redefined' % name.decode())
-        namespace.add(name)
-        if op == b"defmacro":
-            macros.append(declaration_sexp)
-            continue
-        if op == b"defun":
-            functions[name] = declaration_sexp.rest().rest()
-            continue
-        if op == b"defconstant":
-            constants[name] = [QUOTE_KW, declaration_sexp.rest().rest().first().as_atom()]
-            continue
-        raise SyntaxError("expected defun, defmacro, or defconstant")
+        parse_mod_sexp(args.first(), namespace, functions, constants, macros)
 
     uncompiled_main = args.first()
 
