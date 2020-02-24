@@ -1,0 +1,2 @@
+run '(mod (A B) (include "../../clvm_runtime/lib.clvm") (concat2 (q (foo 100 200)) (q ())))'
+(q ("foo" 100 200))
