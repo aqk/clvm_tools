@@ -18,4 +18,17 @@
             (q ())
         )
     )
+
+    ; reverse a list, with accumulator (ie. parts already reversed)
+    (defun reverse-acc (LIST ACC)
+        (if LIST
+            (reverse-acc (r LIST) (c (f LIST) ACC))
+            ACC
+        )
+    )
+
+    ; reverse a list
+    (defmacro reverse (LIST)
+        (qq (reverse-acc (unquote LIST) ()))
+    )
 )
