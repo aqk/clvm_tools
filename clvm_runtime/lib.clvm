@@ -1,0 +1,21 @@
+(
+    ; concatenate two lists, yield a single new list
+    (defun concat2 (X Y)
+        (if Y
+            (if X
+                (c (f X) (concat2 (r X) Y))
+                Y
+            )
+            X
+        )
+    )
+
+
+    ; concatenate any number of lists (include 0 or 1)
+    (defmacro concat LISTS
+        (if LISTS
+            (qq (concat2 (unquote (f LISTS)) (unquote (c concat (r LISTS)))))
+            (q ())
+        )
+    )
+)
