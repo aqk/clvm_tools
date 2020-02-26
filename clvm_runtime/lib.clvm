@@ -10,7 +10,6 @@
         )
     )
 
-
     ; concatenate any number of lists (include 0 or 1)
     (defmacro concat LISTS
         (if LISTS
@@ -30,5 +29,47 @@
     ; reverse a list
     (defmacro reverse (LIST)
         (qq (reverse-acc (unquote LIST) ()))
+    )
+
+    (defun split-list-acc (LIST1-HEAD LIST2-HEAD FIRST-HALF-ACC)
+        (if (and LIST2-HEAD (r LIST2-HEAD))
+            ; we can advance list1 by one and list2 by two
+            (split-list-acc (r LIST1-HEAD) (r (r LIST2-HEAD)) (c (f LIST1-HEAD) FIRST-HALF-ACC))
+            (list FIRST-HALF-ACC LIST1-HEAD)
+        )
+    )
+
+    ; split a list in half, returning two lists
+    ; of equal size (within one).
+    ;
+    ; WARNING: the first list is reversed
+
+    (defun split-list (LIST)
+        (split-list-acc LIST LIST ())
+    )
+
+    (defun merge-lists (A B)
+        (if (and A B)
+            (if (> (f B) (f A))
+                (c (f A) (merge-lists (r A) B))
+                (c (f B) (merge-lists A (r B)))
+            )
+            (if A
+                A
+                B
+            )
+        )
+    )
+
+    (defun sort-merge-list-pair ((A B))
+        (merge-lists (sort A) (sort B))
+    )
+
+    ; sort a list
+    (defun sort (LIST)
+        (if (and LIST (r LIST))
+            (sort-merge-list-pair (split-list LIST) ())
+            LIST
+        )
     )
 )
