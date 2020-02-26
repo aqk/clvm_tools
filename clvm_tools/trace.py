@@ -11,6 +11,8 @@ from ir import reader
 
 from . import binutils, patch_sexp  # noqa
 
+from .cmds import path_or_code, stream_to_bin, stage_import
+
 
 def trace_to_text(trace, disassemble, symbol_table):
     from clvm.more_ops import op_sha256tree
@@ -39,28 +41,6 @@ def make_trace_pre_and_post_eval(log_entries, symbol_table):
             log_entry[-2:] = r
 
     return pre_eval_f, post_eval_f
-
-
-def path_or_code(arg):
-    try:
-        with open(arg) as f:
-            return f.read()
-    except IOError:
-        return arg
-
-
-def stream_to_bin(write_f):
-    b = io.BytesIO()
-    write_f(b)
-    return b.getvalue()
-
-
-def stage_import(stage):
-    stage_path = "stages.stage_%s" % stage
-    try:
-        return importlib.import_module(stage_path)
-    except ImportError:
-        raise ValueError("bad stage: %s" % stage)
 
 
 def clvmt():
@@ -110,20 +90,6 @@ def launch_tool(args, tool_name, default_stage=0):
         return -1
     finally:
         trace_to_text(log_entries, binutils.disassemble, symbol_table)
-
-
-def read_ir(args=sys.argv):
-    parser = argparse.ArgumentParser(
-        description='Read script and tokenize to IR.'
-    )
-    parser.add_argument(
-        "script", help="script in hex or uncompiled text")
-
-    args = parser.parse_args(args=args[1:])
-
-    sexp = reader.read_ir(args.script)
-    blob = stream_to_bin(lambda f: sexp_to_stream(sexp, f))
-    print(blob.hex())
 
 
 """
