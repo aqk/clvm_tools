@@ -72,4 +72,12 @@
             LIST
         )
     )
+
+    ; hash a tree
+    (defun sha256tree0 (TREE)
+        (if (l TREE)
+            (sha256 2 (sha256tree0 (f TREE)) (sha256tree0 (r TREE)))
+            (sha256 1 TREE)
+        )
+    )
 )
