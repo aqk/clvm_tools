@@ -14,6 +14,7 @@ setup(
             "opd = clvm_tools.cmds:opd",
             "run = clvm_tools.cmds:run",
             "brun = clvm_tools.cmds:brun",
+            "clvmt = clvm_tools.trace:clvmt",
         ],
     },
     author_email="kiss@chia.net",

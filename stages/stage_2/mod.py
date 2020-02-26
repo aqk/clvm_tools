@@ -179,4 +179,20 @@ def compile_mod(args, macro_lookup, symbol_table):
 
     main_code = "(opt (q ((c %s %s))))" % (main_path_src, arg_tree_src)
 
+    if has_constants_tree:
+        build_symbol_dump(all_constants_lookup)
+
     return binutils.assemble(main_code)
+
+
+def build_symbol_dump(constants_lookup):
+    from .bindings import run_program
+    from clvm.more_ops import op_sha256tree
+    compiled_lookup = {}
+    for k, v in constants_lookup.items():
+        cost, v1 = run_program(v, [])
+        compiled_lookup[op_sha256tree(v1.to([v1])).as_atom().hex()] = k.decode()
+    import json
+    output = json.dumps(compiled_lookup)
+    with open("main.SYM", "w") as f:
+        f.write(output)
