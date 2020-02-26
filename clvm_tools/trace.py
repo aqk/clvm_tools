@@ -15,10 +15,10 @@ from .cmds import path_or_code, stream_to_bin, stage_import
 
 
 def trace_to_text(trace, disassemble, symbol_table):
-    from clvm.more_ops import op_sha256tree
+    from clvm.more_ops import sha256tree
     for item in trace:
         form, env, cost_before, cost_after, rv = item
-        h = op_sha256tree(form.to([form])).as_atom().hex()
+        h = sha256tree(form).hex()
         display_sexp = env.to(symbol_table[h].encode()).cons(env)
         print("%s => %s" % (disassemble(display_sexp), disassemble(rv)))
         print("")
@@ -26,10 +26,10 @@ def trace_to_text(trace, disassemble, symbol_table):
 
 def make_trace_pre_and_post_eval(log_entries, symbol_table):
 
-    from clvm.more_ops import op_sha256tree
+    from clvm.more_ops import sha256tree
 
     def pre_eval_f(sexp, args, current_cost, max_cost):
-        h = op_sha256tree(sexp.to([sexp])).as_atom().hex()
+        h = sha256tree(sexp).hex()
         if h in symbol_table:
             log_entry = [sexp, args.rest(), current_cost, None, None]
             log_entries.append(log_entry)

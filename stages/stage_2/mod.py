@@ -187,11 +187,11 @@ def compile_mod(args, macro_lookup, symbol_table):
 
 def build_symbol_dump(constants_lookup):
     from .bindings import run_program
-    from clvm.more_ops import op_sha256tree
+    from clvm.more_ops import sha256tree
     compiled_lookup = {}
     for k, v in constants_lookup.items():
         cost, v1 = run_program(v, [])
-        compiled_lookup[op_sha256tree(v1.to([v1])).as_atom().hex()] = k.decode()
+        compiled_lookup[sha256tree(v1).hex()] = k.decode()
     import json
     output = json.dumps(compiled_lookup)
     with open("main.SYM", "w") as f:
