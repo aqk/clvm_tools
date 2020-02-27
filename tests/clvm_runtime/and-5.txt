@@ -1,0 +1,2 @@
+run '((c (mod (A . B) (include "../../clvm_runtime/macros.clvm") (and (= 1 A) (= 2 B))) (a)))' "(1 . 2)"
+1

@@ -1,4 +1,14 @@
 (
+    ; boolean and macro
+    (defmacro and ARGS
+        (if ARGS
+            (qq (if (unquote (f ARGS))
+                (unquote (c and (r ARGS)))
+                ()
+                ))
+            1)
+    )
+
     ; concatenate two lists, yield a single new list
     (defun concat2 (X Y)
         (if Y

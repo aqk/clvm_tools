@@ -1,0 +1,11 @@
+(
+    ; boolean and macro
+    (defmacro and ARGS
+        (if ARGS
+            (qq (if (unquote (f ARGS))
+                (unquote (c and (r ARGS)))
+                ()
+                ))
+            1)
+    )
+)
