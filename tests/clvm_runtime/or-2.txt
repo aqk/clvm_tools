@@ -1,0 +1,2 @@
+run '(mod (A B) (include "../../clvm_runtime/macros.clvm") (or (= 0 1) (= 2 4) (= 3 3)))'
+(q 1)
