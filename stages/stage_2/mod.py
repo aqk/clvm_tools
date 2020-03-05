@@ -64,7 +64,7 @@ def build_used_constants_names(functions, constants, macros):
     be too small. Return a list of all atoms used that are also the names of
     functions or constants, starting with the MAIN_NAME function.
     """
-    macros_as_dict = { _.rest().first().as_atom() : _ for _ in macros }
+    macros_as_dict = {_.rest().first().as_atom(): _ for _ in macros}
 
     possible_symbols = set(functions.keys())
     possible_symbols.update(constants.keys())
@@ -207,7 +207,7 @@ def compile_mod(args, macro_lookup, symbol_table):
     main_path_src = binutils.disassemble(compiled_functions[MAIN_NAME])
 
     if has_constants_tree:
-        all_constants_lookup = dict(compiled_functions)
+        all_constants_lookup = {k: v for k, v in compiled_functions.items() if k in all_constants_names}
         all_constants_lookup.update(constants)
 
         all_constants_list = [all_constants_lookup[_] for _ in all_constants_names]
