@@ -77,9 +77,11 @@ def trace_to_html(invocations, disassemble):
     print(TRAILER)
 
 
-def trace_to_text(trace, disassemble):
+def trace_to_text(trace, disassemble, failure):
     for item in trace:
         form, env, cost_before, cost_after, rv = item
+        if rv is None:
+            rv = failure
         env_str = disassemble(env)
         print("%s [%s] => %s" % (
             disassemble(form), env_str, disassemble(rv)))
