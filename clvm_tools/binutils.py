@@ -17,6 +17,8 @@ def assemble_from_ir(ir_sexp):
     if keyword:
         if keyword[:1] == "#":
             keyword = keyword[1:]
+        if keyword == "@":
+            return to_sexp_f([KEYWORD_TO_ATOM["a"]])
         atom = KEYWORD_TO_ATOM.get(keyword)
         if atom:
             return to_sexp_f(atom)

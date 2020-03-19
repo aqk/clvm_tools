@@ -129,6 +129,8 @@ def do_com_prog(prog, macro_lookup, symbol_table):
     # quote atoms
     if prog.nullp() or not prog.listp():
         atom = prog.as_atom()
+        if atom == b"@":
+            return prog.to([KEYWORD_TO_ATOM["a"]])
         for pair in symbol_table.as_iter():
             symbol, value = pair.first(), pair.rest().first()
             if symbol == atom:
