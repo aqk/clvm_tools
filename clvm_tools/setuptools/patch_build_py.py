@@ -12,54 +12,32 @@ except ImportError:
     wheel = False
 
 
-def patch_build_ext(build_ext):
+def patch_build_py(build_py):
     # allow to use 'clvm_extensions' parameter for setup() call
     Distribution.clvm_extensions = ()
 
-    # replace setuptools build_ext
+    # replace setuptools build_py
     Distribution.orig_get_command_class = Distribution.get_command_class
 
     def get_command_class(self, command):
-        if command == "build_ext":
+        if command == "build_py":
             if command not in self.cmdclass:
-                self.cmdclass[command] = build_ext
+                self.cmdclass[command] = build_py
 
         return self.orig_get_command_class(command)
 
     Distribution.get_command_class = get_command_class
-
-    # use custom has_ext_modules
-    DistDistribution.orig_has_ext_modules = DistDistribution.has_ext_modules
-
-    def has_ext_modules(self):
-        return (
-            self.ext_modules
-            and len(self.ext_modules) > 0
-            or self.clvm_extensions
-            and len(self.clvm_extensions) > 0
-        )
-
-    DistDistribution.has_ext_modules = has_ext_modules
 
     # this is required because, install directly access distribution's
     # ext_modules attr to check if dist has ext modules
     install.orig_finalize_options = install.finalize_options
 
     def finalize_options(self):
-        ext_modules = self.distribution.ext_modules
-
         # all ext modules
-        mods = []
-        if self.distribution.ext_modules:
-            mods.extend(self.distribution.ext_modules)
+        clvm_files = []
         if self.distribution.clvm_extensions:
-            mods.extend(self.distribution.clvm_extensions)
-
-        self.distribution.ext_modules = mods
+            clvm_files.extend(self.distribution.clvm_extensions)
 
         self.orig_finalize_options()
-
-        # restore ext_modules
-        self.distribution.ext_modules = ext_modules
 
     install.finalize_options = finalize_options
